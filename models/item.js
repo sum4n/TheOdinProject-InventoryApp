@@ -6,6 +6,8 @@ const ItemSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
   quality: {
+    type: String,
+    required: true,
     enum: ["Legendary", "Epic", "Rare", "Uncommon", "Common", "Poor"],
   },
   slot: { type: Schema.Types.ObjectId, ref: "Slot", required: true },
