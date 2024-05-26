@@ -1,6 +1,10 @@
 const Item = require("../models/item");
 const asyncHandler = require("express-async-handler");
 
+exports.index = asyncHandler(async (req, res, next) => {
+  res.send("NOT IMPLEMENTED: Site Home Page");
+});
+
 // Display list of all Item.
 exports.item_list = asyncHandler(async (req, res, next) => {
   res.send("NOT IMPLEMENTED: Item list");
