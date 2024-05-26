@@ -92,44 +92,44 @@ router.get("/slots", slot_controller.slot_list);
 
 // GET request for creating ItemInstance. NOTE This must come before routes that display ItemInstance (uses id).
 router.get(
-  "iteminstance/create",
+  "/iteminstance/create",
   item_instance_controller.iteminstance_create_get
 );
 
 // POST request for creating ItemInstance.
 router.post(
-  "iteminstance/create",
+  "/iteminstance/create",
   item_instance_controller.iteminstance_create_post
 );
 
 // GET request to delete ItemInstance.
 router.get(
-  "iteminstance/:id/delete",
+  "/iteminstance/:id/delete",
   item_instance_controller.iteminstance_delete_get
 );
 
 // POST request to delete ItemInstance.
 router.post(
-  "iteminstance/:id/delete",
+  "/iteminstance/:id/delete",
   item_instance_controller.iteminstance_delete_post
 );
 
 // GET request to update ItemInstance.
 router.get(
-  "iteminstance/:id/update",
+  "/iteminstance/:id/update",
   item_instance_controller.iteminstance_update_get
 );
 
 // POST request to update ItemInstance.
 router.post(
-  "iteminstance/:id/update",
+  "/iteminstance/:id/update",
   item_instance_controller.iteminstance_update_post
 );
 
 // GET request for one ItemInstance.
-router.get("iteminstance/:id", item_instance_controller.iteminstance_detail);
+router.get("/iteminstance/:id", item_instance_controller.iteminstance_detail);
 
 // GET request for list of all ItemInstances.
-router.get("iteminstances", item_instance_controller.iteminstance_list);
+router.get("/iteminstances", item_instance_controller.iteminstance_list);
 
 module.exports = router;
