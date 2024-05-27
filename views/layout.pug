@@ -2,6 +2,33 @@ doctype html
 html
   head
     title= title
+    meta(charset='utf-8')
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
     link(rel='stylesheet', href='/stylesheets/style.css')
   body
-    block content
+    div
+      block sidebar
+        ul(class='sidebar')
+          li
+            a(href='/catalog/') Home
+          li
+            a(href='/catalog/items') All items
+          li
+            a(href='/catalog/sellers') All sellers
+          li
+            a(href='/catalog/iteminstances') All item-instances
+          li
+            hr
+          li
+            a(href='/catalog/seller/create') Create new seller
+          li
+            a(href='/catalog/slot/create') Create new slot
+          li
+            a(href='/catalog/item/create') Create new item
+          li
+            a(href='/catalog/iteminstance/create') Create new item instance (copy)
+        
+    div(class='content')
+      block content
+
+    

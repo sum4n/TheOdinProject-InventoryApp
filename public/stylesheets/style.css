@@ -1,8 +1,28 @@
 body {
-  padding: 50px;
+  margin-top: 20px;
+  margin-left: 20px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  display: flex;
+  gap: 20px;
+}
+
+.sidebar {
+  margin-top: 20px;
+  padding: 0;
+  list-style: none;
+  max-width: 200px;
+  line-height: 1.5em;
+}
+
+hr {
+  color: rgba(240, 248, 255, 0.37);
 }
 
 a {
-  color: #00B7FF;
+  color: rgb(41, 157, 252);
+  text-decoration: none;
+}
+
+.content {
+  margin-left: 20px;
 }
