@@ -1,0 +1,27 @@
+extends layout
+
+block content
+
+  h1= title
+  if item_list.length
+    ul
+      each item in item_list
+        li
+          if item.quality == "Epic"
+            a(style="color: #b048f8;")(href=item.url)  #{item.name}
+            |  (#{item.slot.name})
+          if item.quality == "Rare"
+            a(style="color: blue;")(href=item.url)  #{item.name}
+            |  (#{item.slot.name})
+          if item.quality == "Uncommon"
+            a(style="color: green;")(href=item.url)  #{item.name}
+            |  (#{item.slot.name})
+          if item.quality == "Common"
+           a(style="color: white;background-color: grey")(href=item.url)  #{item.name}
+            |  (#{item.slot.name})
+          if item.quality == "Poor"
+           a(style="color: grey;")(href=item.url)  #{item.name}
+            |  (#{item.slot.name})
+
+  else
+    p There are no items.
