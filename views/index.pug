@@ -2,4 +2,16 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  p Welcome to #[em WoW Inventory], a very basic Express website developed as a project in The Odin Project NodeJS course.
+
+  h2 Dynamic content
+
+  p The inventory has the following record counts:
+
+  ul
+    li #[strong Items:] !{item_count}
+    li #[strong Item instances:] !{item_instance_count}
+    li #[strong In-stock item instances] !{item_instance_stock_count}
+    li #[strong Sellers:] !{seller_count}
+    li #[strong Slot:] !{slot_count}
+    

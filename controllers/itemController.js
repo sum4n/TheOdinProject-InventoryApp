@@ -1,8 +1,34 @@
 const Item = require("../models/item");
+const Seller = require("../models/seller");
+const Slot = require("../models/slot");
+const ItemInstance = require("../models/iteminstance");
+
 const asyncHandler = require("express-async-handler");
 
 exports.index = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Site Home Page");
+  // Get details of items, sellers, slots and item instances counts (in paraller)
+  const [
+    numItems,
+    numItemInstances,
+    numInStockItemInstances,
+    numSellers,
+    numSlots,
+  ] = await Promise.all([
+    Item.countDocuments({}).exec(),
+    ItemInstance.countDocuments({}).exec(),
+    ItemInstance.countDocuments({ num_of_stocks: { $gt: 0 } }).exec(),
+    Seller.countDocuments({}).exec(),
+    Slot.countDocuments({}).exec(),
+  ]);
+
+  res.render("index", {
+    title: "WoW Inventory Home",
+    item_count: numItems,
+    item_instance_count: numItemInstances,
+    item_instance_stock_count: numInStockItemInstances,
+    seller_count: numSellers,
+    slot_count: numSlots,
+  });
 });
 
 // Display list of all Item.
