@@ -20,6 +20,12 @@ exports.slot_detail = asyncHandler(async (req, res, next) => {
     Slot.findById(req.params.id).exec(),
   ]);
 
+  if (slot === null) {
+    const err = new Error("Slot not found");
+    err.status = 404;
+    return next(err);
+  }
+
   res.render("slot_detail", {
     items: items,
     slot: slot,
