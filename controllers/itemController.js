@@ -34,7 +34,7 @@ exports.index = asyncHandler(async (req, res, next) => {
 // Display list of all Item.
 exports.item_list = asyncHandler(async (req, res, next) => {
   const allItems = await Item.find({}, "name quality")
-    .sort({ name: 1 })
+    .sort({ quality: 1 })
     .populate("slot")
     .exec();
 
