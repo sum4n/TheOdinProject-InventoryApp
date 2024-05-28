@@ -1,4 +1,6 @@
 const Slot = require("../models/slot");
+const Item = require("../models/item");
+
 const asyncHandler = require("express-async-handler");
 
 // Display list of all Slot.
@@ -13,7 +15,15 @@ exports.slot_list = asyncHandler(async (req, res, next) => {
 
 // Display detail page for a specific Slot.
 exports.slot_detail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: Slot detail: ${req.params.id}`);
+  const [items, slot] = await Promise.all([
+    Item.find({ slot: req.params.id }).sort({ name: 1 }).exec(),
+    Slot.findById(req.params.id).exec(),
+  ]);
+
+  res.render("slot_detail", {
+    items: items,
+    slot: slot,
+  });
 });
 
 // Display Slot create form on GET.

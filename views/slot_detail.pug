@@ -1,0 +1,17 @@
+extends layout
+
+block content
+
+  h1 Slot:  #{slot.name}
+
+  div(style="margin-left: 20px; margin-bottom: 20px; margin-top: 20px")
+    h2 Items:
+    if items.length
+      dl
+        for item in items
+          dt
+            a(class='item' + item.quality href=item.url) #{item.name} - (#{item.quality})
+          dd(style="margin-bottom:20px") #{item.description}
+
+    else
+      p There are no items in this slot.
