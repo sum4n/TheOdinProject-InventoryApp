@@ -14,7 +14,7 @@ const ItemInstanceSchema = new Schema({
 ItemInstanceSchema.virtual("stock").get(function () {
   let stock_status = "Out-of-stock";
 
-  if (this.num_in_stock > 0) {
+  if (this.num_of_stocks > 0) {
     stock_status = "In-stock";
   }
 
