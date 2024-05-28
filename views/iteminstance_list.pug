@@ -1,0 +1,15 @@
+extends layout
+
+block content
+
+  h1= title
+
+  if iteminstance_list.length
+    ul
+      each val in iteminstance_list
+        li
+          a(class='item' + val.item.quality  href=val.url)  #{val.item.name} &nbsp;
+          span - Seller: #{val.seller.name}  
+          
+  else
+    p There are no Item Instances.

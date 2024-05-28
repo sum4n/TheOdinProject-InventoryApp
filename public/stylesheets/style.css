@@ -26,3 +26,28 @@ a {
 .content {
   margin-left: 20px;
 }
+
+.itemLegendary {
+  color: orange;
+}
+
+.itemEpic {
+  color: #b048f8;
+}
+
+.itemRare {
+  color: blue;
+}
+
+.itemUncommon {
+  color: green;
+}
+
+.itemCommon {
+  color: white;
+  background-color: grey;
+}
+
+.itemPoor {
+  color: grey;
+}
