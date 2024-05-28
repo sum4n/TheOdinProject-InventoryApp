@@ -3,7 +3,12 @@ const asyncHandler = require("express-async-handler");
 
 // Display list of all Slot.
 exports.slot_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Slot list");
+  const allSlots = await Slot.find({}).sort({ name: 1 }).exec();
+
+  res.render("slot_list", {
+    title: "Slot List",
+    slot_list: allSlots,
+  });
 });
 
 // Display detail page for a specific Slot.

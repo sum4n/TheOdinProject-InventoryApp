@@ -1,0 +1,15 @@
+extends layout
+
+block content
+
+  h1= title
+
+  if slot_list.length
+    ul
+      for slot in slot_list
+        li
+          a(href=slot.url) #{slot.name}
+          span - #{slot.description}
+
+  else
+    p There are no slots.
