@@ -1,0 +1,14 @@
+extends layout
+
+block content
+
+  h1= title
+
+  if seller_list.length
+    ul
+      for seller in seller_list
+        li
+          a(href=seller.url) #{seller.name}
+
+  else
+    p There are no sellers.

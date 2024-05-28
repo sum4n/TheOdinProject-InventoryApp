@@ -12,7 +12,7 @@ SellerSchema.virtual("name").get(function () {
   // To avoid error in case no first_name or last_name.
   let fullname = "";
   if (this.first_name && this.last_name) {
-    fullname = `${this.first_name}, ${this.last_name}`;
+    fullname = `${this.first_name} ${this.last_name}`;
   }
 
   return fullname;

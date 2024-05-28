@@ -3,7 +3,12 @@ const asyncHandler = require("express-async-handler");
 
 // Display list of all Sellers.
 exports.seller_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Seller list");
+  const allSellers = await Seller.find({}).sort({ first_name: 1 }).exec();
+
+  res.render("seller_list", {
+    title: "Seller List",
+    seller_list: allSellers,
+  });
 });
 
 // Display detail page of specific Seller.
