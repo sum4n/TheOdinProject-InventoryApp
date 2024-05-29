@@ -1,0 +1,20 @@
+extends layout
+
+block content
+
+  h1 ID: #{itemInstance._id}
+
+  p #[strong Item: ]
+    a(href=itemInstance.item.url)
+      span(class='item' + itemInstance.item.quality) #{itemInstance.item.name}
+
+  p #[strong Seller: ]
+    a(href=itemInstance.seller.url) #{itemInstance.seller.name}
+
+  if itemInstance.num_of_stocks > 0
+    p #[strong Number of Stocks: ] #{itemInstance.num_of_stocks}
+    p #[strong Price: ] #{itemInstance.price}
+  else
+    p #[strong #{itemInstance.stock}]
+
+  

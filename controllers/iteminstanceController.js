@@ -1,4 +1,5 @@
 const ItemInstance = require("../models/iteminstance");
+
 const asyncHandler = require("express-async-handler");
 
 // Display list of all ItemInstances.
@@ -16,7 +17,22 @@ exports.iteminstance_list = asyncHandler(async (req, res, next) => {
 
 // Display detail page for a specific ItemInstance.
 exports.iteminstance_detail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: ItemInstance detail: ${req.params.id}`);
+  const itemInstance = await ItemInstance.findById(req.params.id)
+    .populate("item")
+    .populate("seller")
+    .exec();
+
+  if (itemInstance === null) {
+    // No results
+    const err = new Error("No Item instance found.");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("iteminstance_detail", {
+    title: "ItemInstance Detail",
+    itemInstance: itemInstance,
+  });
 });
 
 // Display ItemInstance create form on GET.
