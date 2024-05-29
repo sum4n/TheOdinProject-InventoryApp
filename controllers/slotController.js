@@ -27,6 +27,7 @@ exports.slot_detail = asyncHandler(async (req, res, next) => {
   }
 
   res.render("slot_detail", {
+    title: "Slot Detail",
     items: items,
     slot: slot,
   });
