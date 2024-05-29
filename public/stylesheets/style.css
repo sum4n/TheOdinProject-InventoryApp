@@ -51,3 +51,10 @@ a {
 .itemPoor {
   color: grey;
 }
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 1rem;
+}

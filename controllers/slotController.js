@@ -2,6 +2,7 @@ const Slot = require("../models/slot");
 const Item = require("../models/item");
 
 const asyncHandler = require("express-async-handler");
+const { body, validationResult } = require("express-validator");
 
 // Display list of all Slot.
 exports.slot_list = asyncHandler(async (req, res, next) => {
@@ -34,14 +35,59 @@ exports.slot_detail = asyncHandler(async (req, res, next) => {
 });
 
 // Display Slot create form on GET.
-exports.slot_create_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Slot create GET");
-});
+exports.slot_create_get = (req, res, next) => {
+  res.render("slot_form", { title: "Create Slot" });
+};
 
 // Handle Slot create on POST.
-exports.slot_create_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Slot create POST");
-});
+exports.slot_create_post = [
+  // Validate and sanitize the name field.
+  body("name", "Slot name must contain at least 3 characters")
+    .trim()
+    .isLength({ min: 3 })
+    .escape(),
+
+  body("description", "Description must contain at least 4 characters")
+    .trim()
+    .isLength({ min: 4 })
+    .escape(),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a slot object with escaped and trimmed data.
+    const slot = new Slot({
+      name: req.body.name,
+      description: req.body.description,
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render the form again with sanitized values/error messages.
+      res.render("slot_form", {
+        title: "Create Slot",
+        slot: slot,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Data from form is valid.
+      // Check if Slot with same name alredy exists.
+      const slotExists = await Slot.findOne({ name: req.body.name })
+        .collation({ locale: "en", strength: 2 })
+        .exec();
+      if (slotExists) {
+        // Slot exists, redirect to its detail page.
+        res.redirect(slotExists.url);
+      } else {
+        await slot.save();
+        // New slot saved. Redirect to slot detail page.
+        res.redirect(slot.url);
+      }
+    }
+  }),
+];
 
 // Display Slot delete form on GET.
 exports.slot_delete_get = asyncHandler(async (req, res, next) => {
