@@ -1,4 +1,6 @@
 const Seller = require("../models/seller");
+const ItemInstance = require("../models/iteminstance");
+
 const asyncHandler = require("express-async-handler");
 
 // Display list of all Sellers.
@@ -13,7 +15,22 @@ exports.seller_list = asyncHandler(async (req, res, next) => {
 
 // Display detail page of specific Seller.
 exports.seller_detail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: Seller detail: ${req.params.id}`);
+  const [seller, sellerItemInstances] = await Promise.all([
+    Seller.findById(req.params.id).exec(),
+    ItemInstance.find({ seller: req.params.id }).populate("item").exec(),
+  ]);
+
+  if (seller === null) {
+    const err = new Error("Seller not found.");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("seller_detail", {
+    title: "Seller Detail",
+    seller: seller,
+    sellerItemInstances: sellerItemInstances,
+  });
 });
 
 // Display Seller create form on GET.
