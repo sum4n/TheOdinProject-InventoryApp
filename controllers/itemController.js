@@ -46,7 +46,23 @@ exports.item_list = asyncHandler(async (req, res, next) => {
 
 // Display detail page for a specific Item.
 exports.item_detail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: Item detail: ${req.params.id}`);
+  const [item, itemInstances] = await Promise.all([
+    Item.findById(req.params.id).sort({ name: 1 }).populate("slot").exec(),
+    ItemInstance.find({ item: req.params.id }).populate("seller").exec(),
+  ]);
+
+  if (item === null) {
+    // No results
+    const err = new Error("Item not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("item_detail", {
+    title: "Item Detail",
+    item: item,
+    itemInstances: itemInstances,
+  });
 });
 
 // Display Item create form on GET.

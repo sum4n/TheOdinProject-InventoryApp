@@ -1,0 +1,31 @@
+extends layout
+
+block content
+
+  h1 Title: 
+    span(class='item' + item.quality) #{item.name}
+
+  div
+    p #[strong Description:] #{item.description} 
+    p #[strong Quality:] 
+      span(class='item' + item.quality) #{item.quality} 
+    p #[strong Slot:] 
+      a(href=item.slot.url) #{item.slot.name} 
+    p #[strong Slot Description:] #{item.slot.description}
+
+     div(style="margin-left: 20px;margin-top: 40px")
+      h2 Stocks:
+      hr
+      if itemInstances.length
+        for itemVal in itemInstances
+          p #[strong Id:]
+            a(href=itemVal.url)  #{itemVal._id} 
+            span (#{itemVal.stock})
+          p #[strong Number of stocks:] #{itemVal.num_of_stocks} 
+          p #[strong Price:] #{itemVal.price}
+          p #[strong Seller:]
+            a(href=itemVal.seller.url)  #{itemVal.seller.name}
+          hr
+
+      else 
+        p There are no stocks available in the store.
