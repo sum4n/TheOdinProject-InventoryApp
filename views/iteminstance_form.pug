@@ -1,0 +1,40 @@
+extends layout
+
+block content
+
+  h1= title 
+
+  form(method="POST")
+    div.form-group
+      label(for='item') Item: 
+      select#item(name='item' required)
+        option(value='') --Please select an item--
+        for item in items
+          if selected_item == item._id.toString()
+            option(value=item._id, selected) #{item.name}
+          else 
+            option(value=item._id) #{item.name}
+
+      label(for='seller') Seller:
+      select#seller(name='seller' required)
+        option(value='') --Please select a seller-- 
+        for seller in sellers 
+          if selected_seller == seller._id.toString()
+            option(value=seller._id, selected) #{seller.name}
+          else 
+            option(value=seller._id) #{seller.name}
+
+      label(for='num_of_stocks') Number of stocks: 
+      input#num_of_stocks(type='number', name='num_of_stocks' required min="1" value=(undefined===iteminstance ? '' : iteminstance.num_of_stocks))
+
+      label(for='price') Price: 
+      input#price(type='number', name='price' required min='1' step='0.01' value=(undefined===iteminstance ? '' : parseFloat(iteminstance.price)))
+
+      button(type='submit') Submit
+
+    if errors
+      ul
+        for error in errors 
+          li!= error.msg
+
+

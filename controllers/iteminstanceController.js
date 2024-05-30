@@ -1,6 +1,9 @@
 const ItemInstance = require("../models/iteminstance");
+const Item = require("../models/item");
+const Seller = require("../models/seller");
 
 const asyncHandler = require("express-async-handler");
+const { body, validationResult } = require("express-validator");
 
 // Display list of all ItemInstances.
 exports.iteminstance_list = asyncHandler(async (req, res, next) => {
@@ -37,13 +40,77 @@ exports.iteminstance_detail = asyncHandler(async (req, res, next) => {
 
 // Display ItemInstance create form on GET.
 exports.iteminstance_create_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: ItemInstance create GET");
+  const [allItems, allSellers] = await Promise.all([
+    Item.find({}, "name").sort({ name: 1 }).exec(),
+    Seller.find({}).sort({ first_name: 1 }).exec(),
+  ]);
+
+  res.render("iteminstance_form", {
+    title: "Create ItemInstance",
+    items: allItems,
+    sellers: allSellers,
+  });
 });
 
 // Handle ItemInstance create on POST
-exports.iteminstance_create_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: ItemInstance create POST");
-});
+exports.iteminstance_create_post = [
+  body("item", "Item must be specified").trim().isLength({ min: 1 }).escape(),
+  body("seller", "Seller must be specified")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("num_of_stocks")
+    .trim()
+    .isInt()
+    .withMessage("Stock must be interger.")
+    .isInt({ min: 1, max: 100 })
+    .withMessage("Stock number must be between 1 and 100")
+    .escape(),
+  body("price", "Price must be specified.")
+    .trim()
+    .isDecimal({ min: 1 })
+    .withMessage("Input must be decimal.")
+    .escape(),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create an ItemInstance object with escaped and trimmed data.
+    const iteminstance = new ItemInstance({
+      item: req.body.item,
+      seller: req.body.seller,
+      num_of_stocks: req.body.num_of_stocks,
+      price: req.body.price.toString(),
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/error messages.
+
+      // Get all items and sellers for form.
+      const [allItems, allSellers] = await Promise.all([
+        Item.find({}, "name").sort({ name: 1 }).exec(),
+        Seller.find({}).sort({ first_name: 1 }).exec(),
+      ]);
+
+      res.render("iteminstance_form", {
+        title: "Create ItemInstance",
+        items: allItems,
+        selected_item: iteminstance.item._id,
+        sellers: allSellers,
+        selected_seller: iteminstance.seller._id,
+        iteminstance: iteminstance,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Data from form is valid. Save Iteminstance.
+      await iteminstance.save();
+      res.redirect(iteminstance.url);
+    }
+  }),
+];
 
 // Display ItemInstance delete form on GET.
 exports.iteminstance_delete_get = asyncHandler(async (req, res, next) => {
