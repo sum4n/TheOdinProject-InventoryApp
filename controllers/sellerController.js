@@ -2,6 +2,7 @@ const Seller = require("../models/seller");
 const ItemInstance = require("../models/iteminstance");
 
 const asyncHandler = require("express-async-handler");
+const { body, validationResult } = require("express-validator");
 
 // Display list of all Sellers.
 exports.seller_list = asyncHandler(async (req, res, next) => {
@@ -34,14 +35,52 @@ exports.seller_detail = asyncHandler(async (req, res, next) => {
 });
 
 // Display Seller create form on GET.
-exports.seller_create_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Seller create GET");
-});
+exports.seller_create_get = (req, res, next) => {
+  res.render("seller_form", { title: "Create Seller" });
+};
 
 // Handle Seller create on POST.
-exports.seller_create_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Seller create POST");
-});
+exports.seller_create_post = [
+  // Validate and sanitize fields.
+  body("first_name", "First name must contain at least 2 characters.")
+    .trim()
+    .isLength({ min: 2 })
+    .escape(),
+
+  body("last_name", "Last name must contail at least 2 characters.")
+    .trim()
+    .isLength({ min: 2 })
+    .escape(),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a seller object with escaped and trimmed data.
+    const seller = new Seller({
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render the form again with sanitized values/error messages.
+      res.render("seller_form", {
+        title: "Create Seller",
+        seller: seller,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Data from form is valid.
+
+      // Save seller.
+      await seller.save();
+      // Redirect to new seller record.
+      res.redirect(seller.url);
+    }
+  }),
+];
 
 // Display Seller delete form on GET.
 exports.seller_delete_get = asyncHandler(async (req, res, next) => {
