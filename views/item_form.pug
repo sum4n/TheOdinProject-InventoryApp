@@ -1,0 +1,41 @@
+extends layout
+
+block content
+
+  h1 #{title}
+
+  form(method="POST") 
+    div.form-group
+      label(for='name') Name:
+      input#name(type='text', placeholder='Name of item' name='name' required value=(undefined===item ? '' : item.name))
+
+      label(for='description') Description:
+      input#description(type='text', placeholder='Item description' name='description' required value=(undefined===item ? '' : item.description))
+
+      label(for='quality') Quality:
+      select#quality(name='quality' required)
+        option(value='') --Please select an item quality--
+        each val in ['Legendary', 'Epic', 'Rare', 'Uncommon', 'Common', 'Poor']
+          if undefined === item || item.quality != val
+            option(value=val)= val
+          else
+            option(value=val selected)= val
+
+      label(for='slot') Slot:
+      select#slot(name='slot' required)
+        option(value='') --Please select a slot---
+        for slot in slots
+          if item
+            if slot._id.toString() === item.slot._id.toString()
+              option(value=slot._id selected) #{slot.name}
+            else
+              option(value=slot._id) #{slot.name}
+          else
+            option(value=slot._id) #{slot.name}
+
+      button(type='submit') Submit
+
+    if errors
+      ul
+        for error in errors
+          li!= error.msg
