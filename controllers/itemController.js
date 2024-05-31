@@ -126,12 +126,45 @@ exports.item_create_post = [
 
 // Display Item delete form on GET.
 exports.item_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Item delete GET");
+  // Get details of item and all its instances (in parallel).
+  const [item, itemInstances] = await Promise.all([
+    Item.findById(req.params.id).exec(),
+    ItemInstance.find({ item: req.params.id }).populate("item").exec(),
+  ]);
+
+  if (item === null) {
+    // No result.
+    res.redirect("/catalog/items");
+  }
+
+  res.render("item_delete", {
+    title: "Delete Item",
+    item: item,
+    itemInstances: itemInstances,
+  });
 });
 
 // Handle Item delete on POST.
 exports.item_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Item delete POST");
+  // Get details of item and all its instances (in parallel).
+  const [item, itemInstances] = await Promise.all([
+    Item.findById(req.params.id).exec(),
+    ItemInstance.find({ item: req.params.id }).populate("item").exec(),
+  ]);
+
+  if (itemInstances.length > 0) {
+    // Item has instances. Render in same way as for GET route.
+    res.render("item_delete", {
+      title: "Delte Item",
+      item: item,
+      itemInstances: itemInstances,
+    });
+    return;
+  } else {
+    // Item has no instances. Delete item object and redirect to list of items.
+    await Item.findByIdAndDelete(req.body.itemid);
+    res.redirect("/catalog/items");
+  }
 });
 
 // Display Item update form on GET.

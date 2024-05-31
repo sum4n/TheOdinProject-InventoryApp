@@ -1,0 +1,25 @@
+extends layout
+
+block content
+
+  h1 #{title}: 
+    span(class='item' + item.quality) #{item.name}
+  if itemInstances.length
+    p #[strong Delete the following item instances before attempting to delete the item.]
+    div(style='margin-left:20px;margin-top:20px')
+      h4 ItemInstances
+      hr
+      dl
+        each itemInstance in itemInstances
+          dt
+            a(href=itemInstance.url) ID: #{itemInstance._id}
+          dd(class='item' + item.quality) #{item.name}
+          hr
+  else 
+    p Do you really want to delete this Item?
+
+    form(method='POST')
+      div.form-group
+        input#itemid.form-control(type='hidden', name='itemid', value=item._id)
+
+      button(type='submit') Delete
