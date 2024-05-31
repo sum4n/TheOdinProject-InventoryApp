@@ -110,7 +110,7 @@ exports.seller_delete_post = asyncHandler(async (req, res, next) => {
     ItemInstance.find({ seller: req.params.id }).populate("item").exec(),
   ]);
 
-  if (allItemsBySeller > 0) {
+  if (allItemsBySeller.length > 0) {
     // Seller has items. Render in same way as for GET route.
     res.render("seller_delete", {
       title: "Delete Seller",
@@ -119,7 +119,7 @@ exports.seller_delete_post = asyncHandler(async (req, res, next) => {
     });
     return;
   } else {
-    // Seller has no books. Delete object and redirect to the list of sellers.
+    // Seller has no items. Delete object and redirect to the list of sellers.
     await Seller.findByIdAndDelete(req.body.sellerid);
     res.redirect("/catalog/sellers");
   }
