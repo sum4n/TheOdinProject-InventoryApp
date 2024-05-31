@@ -1,0 +1,25 @@
+extends layout
+
+block content
+
+  h1 #{title}: #{seller.name}
+
+  if seller_items.length
+    p #[strong Delete the following items before attempting to delete the seller.]
+    div(style='margin-left: 20px; margin-top: 20px')
+     h4 Items
+     dl
+      each iteminstance in seller_items
+        dt 
+          a(href=iteminstance.url) #{iteminstance.item.name}
+        dd #{iteminstance.item.description}
+        hr
+    
+  else
+    p Do you really want to delte this Seller?
+
+    form(method='POST')
+      div.form-group
+        input#sellerid.form-control(type='hidden', name='sellerid', value= seller._id)
+      
+      button(type='submit') Delete

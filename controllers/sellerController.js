@@ -84,12 +84,45 @@ exports.seller_create_post = [
 
 // Display Seller delete form on GET.
 exports.seller_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Seller delete GET");
+  // Get details of seller and all their item instance.
+  const [seller, allItemsBySeller] = await Promise.all([
+    Seller.findById(req.params.id).exec(),
+    ItemInstance.find({ seller: req.params.id }).populate("item").exec(),
+  ]);
+
+  if (seller === null) {
+    // No result.
+    res.redirect("/catalog/sellers");
+  }
+
+  res.render("seller_delete", {
+    title: "Delete Seller",
+    seller: seller,
+    seller_items: allItemsBySeller,
+  });
 });
 
 // Handle Seller delete on POST.
 exports.seller_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Seller create POST");
+  // Get details of seller and all their items (in parallel).
+  const [seller, allItemsBySeller] = await Promise.all([
+    Seller.findById(req.params.id).exec(),
+    ItemInstance.find({ seller: req.params.id }).populate("item").exec(),
+  ]);
+
+  if (allItemsBySeller > 0) {
+    // Seller has items. Render in same way as for GET route.
+    res.render("seller_delete", {
+      title: "Delete Seller",
+      seller: seller,
+      seller_items: allItemsBySeller,
+    });
+    return;
+  } else {
+    // Seller has no books. Delete object and redirect to the list of sellers.
+    await Seller.findByIdAndDelete(req.body.sellerid);
+    res.redirect("/catalog/sellers");
+  }
 });
 
 // Display Seller update form on GET.
