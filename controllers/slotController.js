@@ -91,12 +91,46 @@ exports.slot_create_post = [
 
 // Display Slot delete form on GET.
 exports.slot_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Slot delete GET");
+  // Get details of slot and all its items (in parallel)
+  const [slot, itemsInSlot] = await Promise.all([
+    Slot.findById(req.params.id).exec(),
+    Item.find({ slot: req.params.id }).sort({ quality: 1 }).exec(),
+  ]);
+
+  if (slot === null) {
+    // No result.
+    res.redirect("/catalog/slots");
+  }
+
+  res.render("slot_delete", {
+    title: "Delete Slot",
+    slot: slot,
+    slot_items: itemsInSlot,
+  });
 });
 
 // Handle Slot delete on POST.
 exports.slot_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Slot delete POST");
+  // Get details of slot and all its items (in parallel)
+  const [slot, itemsInSlot] = await Promise.all([
+    Slot.findById(req.params.id).exec(),
+    Item.find({ slot: req.params.id }).sort({ quality: 1 }).exec(),
+  ]);
+
+  if (itemsInSlot.length > 0) {
+    // Slot has items. Render in same way as for GET route.
+    console.log("hey");
+    res.render("slot_delete", {
+      title: "Delete Slot",
+      slot: slot,
+      slot_items: itemsInSlot,
+    });
+    return;
+  } else {
+    // Slot has no items. Delete object and redirect to the list of slots.
+    await Slot.findByIdAndDelete(req.body.slotid);
+    res.redirect("/catalog/slots");
+  }
 });
 
 // Display Slot update form on GET.

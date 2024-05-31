@@ -1,0 +1,25 @@
+extends layout
+
+block content
+
+  h1 #{title}: #{slot.name}
+
+  if slot_items.length
+    p #[strong Delete the following items before attempting to delete the slot.]
+    div(style='margin-left:20px;margin-top:20px')
+      h4 Items
+      dl
+        each item in slot_items
+          dt
+            a(href=item.url) #{item.name}
+          dd #{item.description}
+          hr
+
+  else 
+    p Do you really want to delete this Slot?
+
+    form(method='POST')
+      div.form-group
+        input#slotid(type='hidden', name='slotid', value=slot._id)
+
+      button(type='submit') Delete
