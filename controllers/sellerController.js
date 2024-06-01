@@ -127,10 +127,61 @@ exports.seller_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display Seller update form on GET.
 exports.seller_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Seller update GET");
+  // Get seller for form.
+  const seller = await Seller.findById(req.params.id).exec();
+
+  if (seller === null) {
+    const err = new Error("Seller not found.");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("seller_form", {
+    title: "Update Seller",
+    seller: seller,
+  });
 });
 
 // Handle Seller update on POST.
-exports.seller_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Seller update POST");
-});
+exports.seller_update_post = [
+  // Validate and sanitize fields.
+  body("first_name", "First name must contain at least 2 characters.")
+    .trim()
+    .isLength({ min: 2 })
+    .escape(),
+
+  body("last_name", "Last name must contail at least 2 characters.")
+    .trim()
+    .isLength({ min: 2 })
+    .escape(),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a seller object with escaped and trimmed data.
+    const seller = new Seller({
+      first_name: req.body.first_name,
+      last_name: req.body.last_name,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render the form again with sanitized values/error messages.
+      res.render("seller_form", {
+        title: "Update Seller",
+        seller: seller,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Data from form is valid.
+
+      // Update seller.
+      await Seller.findByIdAndUpdate(req.params.id, seller, {});
+      // Redirect to new seller record.
+      res.redirect(seller.url);
+    }
+  }),
+];
