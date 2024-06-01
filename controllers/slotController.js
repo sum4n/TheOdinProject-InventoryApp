@@ -134,10 +134,59 @@ exports.slot_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display Slot update form on GET.
 exports.slot_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Slot update GET");
+  // Get slot for form.
+  const slot = await Slot.findById(req.params.id).exec();
+
+  if (slot == null) {
+    const err = new Error("Slot not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("slot_form", {
+    title: "Update Slot",
+    slot: slot,
+  });
 });
 
 // Handle Slot update on POST.
-exports.slot_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Slot update POST");
-});
+exports.slot_update_post = [
+  // Validate and sanitize fields.
+  body("name", "Slot name must contain at least 3 characters")
+    .trim()
+    .isLength({ min: 3 })
+    .escape(),
+
+  body("description", "Description must contain at least 4 characters")
+    .trim()
+    .isLength({ min: 4 })
+    .escape(),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a slot object with escaped and trimmed data.
+    const slot = new Slot({
+      name: req.body.name,
+      description: req.body.description,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render the form again with sanitized values/error messages.
+      res.render("slot_form", {
+        title: "Update Slot",
+        slot: slot,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Update
+      await Slot.findByIdAndUpdate(req.params.id, slot, {});
+      // Slot updated. Redirect to slot detail page.
+      res.redirect(slot.url);
+    }
+  }),
+];
