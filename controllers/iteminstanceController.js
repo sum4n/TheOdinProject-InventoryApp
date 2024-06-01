@@ -139,10 +139,88 @@ exports.iteminstance_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display ItemInstance update form GET.
 exports.iteminstance_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: ItemInstance update GET");
+  // Get all Items and all Sellers and iteminstance for form.
+  const [iteminstance, allItems, allSellers] = await Promise.all([
+    ItemInstance.findById(req.params.id).exec(),
+    Item.find({}).sort({ quality: 1 }).exec(),
+    Seller.find({}).sort({ first_name: 1 }).exec(),
+  ]);
+
+  if (iteminstance === null) {
+    // No results
+    const err = new Error("Item instance not found.");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("iteminstance_form", {
+    title: "Update ItemInstance",
+    iteminstance: iteminstance,
+    items: allItems,
+    selected_item: iteminstance.item._id,
+    sellers: allSellers,
+    selected_seller: iteminstance.seller._id,
+  });
 });
 
 // Handle ItemInstance update on POST.
-exports.iteminstance_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: ItemInstance update POST");
-});
+exports.iteminstance_update_post = [
+  body("item", "Item must be specified").trim().isLength({ min: 1 }).escape(),
+  body("seller", "Seller must be specified")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("num_of_stocks")
+    .trim()
+    .isInt()
+    .withMessage("Stock must be integer.")
+    .isInt({ min: 1, max: 100 })
+    .withMessage("Stock number must be between 1 and 100")
+    .escape(),
+  body("price", "Price must be specified.")
+    .trim()
+    .isDecimal({ min: 1 })
+    .withMessage("Input must be decimal.")
+    .escape(),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create an ItemInstance object with escaped and trimmed data.
+    const iteminstance = new ItemInstance({
+      item: req.body.item,
+      seller: req.body.seller,
+      num_of_stocks: req.body.num_of_stocks,
+      price: req.body.price,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/errors messages.
+
+      // Get all items and sellers for form
+      const [allItems, allSellers] = await Promise.all([
+        Item.find({}, "name").sort({ name: 1 }).exec(),
+        Seller.find({}).sort({ first_name: 1 }).exec(),
+      ]);
+
+      res.render("iteminstance_form", {
+        title: "Create ItemInstance",
+        items: allItems,
+        selected_item: iteminstance.item._id,
+        sellers: allSellers,
+        selected_seller: iteminstance.seller._id,
+        iteminstance: iteminstance,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Data from form is valid. Update object.
+      await ItemInstance.findByIdAndUpdate(req.params.id, iteminstance, {});
+
+      res.redirect(iteminstance.url);
+    }
+  }),
+];
