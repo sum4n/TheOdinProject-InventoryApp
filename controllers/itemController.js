@@ -169,10 +169,73 @@ exports.item_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display Item update form on GET.
 exports.item_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Item update GET");
+  // Get item and its slots for form.
+  const [item, slots] = await Promise.all([
+    Item.findById(req.params.id).populate("slot").exec(),
+    Slot.find({}).sort({ name: 1 }).exec(),
+  ]);
+
+  if (item === null) {
+    // No results.
+    const err = new Error("Item not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("item_form", {
+    title: "Update Item",
+    item: item,
+    slots: slots,
+  });
 });
 
 // Handle Item update on POST.
-exports.item_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Item update POST");
-});
+exports.item_update_post = [
+  body("name", "Name must not be empty.").trim().isLength({ min: 1 }).escape(),
+  body("description", "Description must not be empty.")
+    .trim()
+    .isLength({ min: 3 })
+    .escape(),
+  body("quality", "Quality must not be empty.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape(),
+  body("slot", "Slot must not be empty").trim().isLength({ min: 1 }).escape(),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create an Item object with the escaped and trimmed data.
+    const item = new Item({
+      name: req.body.name,
+      description: req.body.description,
+      quality: req.body.quality,
+      slot: req.body.slot,
+      _id: req.params.id, // Required, else a new ID will be assigned.
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render the form again with sanitized values/errors messages.
+
+      // Get item and its slots for form.
+      const [item, slots] = await Promise.all([
+        Item.findById(req.params.id).populate("slot").exec(),
+        Slot.find({}).sort({ name: 1 }).exec(),
+      ]);
+
+      res.render("item_form", {
+        title: "Update Item",
+        item: item,
+        slots: slots,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      await Item.findByIdAndUpdate(req.params.id, item, {});
+      // Redirect to item detail page.
+      res.redirect(item.url);
+    }
+  }),
+];
