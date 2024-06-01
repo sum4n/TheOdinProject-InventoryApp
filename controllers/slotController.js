@@ -119,7 +119,6 @@ exports.slot_delete_post = asyncHandler(async (req, res, next) => {
 
   if (itemsInSlot.length > 0) {
     // Slot has items. Render in same way as for GET route.
-    console.log("hey");
     res.render("slot_delete", {
       title: "Delete Slot",
       slot: slot,

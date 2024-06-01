@@ -1,0 +1,23 @@
+extends layout
+
+block content
+
+  h1 #{title}: #{iteminstance._id}
+
+  hr
+  
+  div(style='margin-top:20px;margin-left:20px')
+    p #[strong Item name: ]
+      a(class=`item${iteminstance.item.quality}` href=iteminstance.item.url) #{iteminstance.item.name} 
+    p #[strong Seller name: ]
+      a(href=iteminstance.seller.url) #{iteminstance.seller.name} 
+    p #[strong Number of stocks: ] #{iteminstance.num_of_stocks} 
+    p #[strong Price: ] #{iteminstance.price}
+
+  hr
+  p(style='margin-top:20px') Do you really want to delete this ItemInstance?
+
+  form(method='POST')
+    div.form-group
+     input#iteminstanceid.form-control(type='hidden', name='iteminstanceid', value=iteminstance._id)
+    button(type='submit') Delete
