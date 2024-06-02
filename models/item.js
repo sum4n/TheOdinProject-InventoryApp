@@ -11,6 +11,7 @@ const ItemSchema = new Schema({
     enum: ["Legendary", "Epic", "Rare", "Uncommon", "Common", "Poor"],
   },
   slot: { type: Schema.Types.ObjectId, ref: "Slot", required: true },
+  imgUrl: { type: String },
 });
 
 // Virtual for item's URL.
