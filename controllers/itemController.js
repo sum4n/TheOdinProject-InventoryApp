@@ -34,7 +34,7 @@ exports.index = asyncHandler(async (req, res, next) => {
 
 // Display list of all Item.
 exports.item_list = asyncHandler(async (req, res, next) => {
-  const allItems = await Item.find({}, "name quality")
+  const allItems = await Item.find({}, "name quality imgUrl")
     .sort({ quality: 1 })
     .populate("slot")
     .exec();
@@ -89,6 +89,7 @@ exports.item_create_post = [
     .isLength({ min: 1 })
     .escape(),
   body("slot", "Slot must not be empty").trim().isLength({ min: 1 }).escape(),
+  // TODO: Sanitize file. Only image file should be uploaded.
 
   // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
@@ -101,6 +102,7 @@ exports.item_create_post = [
       description: req.body.description,
       quality: req.body.quality,
       slot: req.body.slot,
+      imgUrl: `/images/${req.file.filename}`,
     });
 
     if (!errors.isEmpty()) {
