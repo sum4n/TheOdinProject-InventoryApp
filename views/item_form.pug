@@ -4,10 +4,13 @@ block content
 
   h1 #{title}
 
-  form(method="POST") 
+  form(method="POST" enctype='multipart/form-data') 
     div.form-group
       label(for='name') Name:
       input#name(type='text', placeholder='Name of item' name='name' required value=(undefined===item ? '' : item.name))
+
+      label(for='itemImage') Add image:
+      input#itemImage(type='file', placeholder='Add an image', name='itemImage' value=(undefined===item ? '' : item.itemImage))
 
       label(for='description') Description:
       input#description(type='text', placeholder='Item description' name='description' required value=(undefined===item ? '' : item.description))
