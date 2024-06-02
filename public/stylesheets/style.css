@@ -63,3 +63,22 @@ dd {
   margin-bottom: 0.5rem;
   margin-left: 0;
 }
+
+.imgDiv {
+  width: 56px;
+  height: 56px;
+  border: 1px solid black;
+  text-align: center;
+}
+
+img {
+  width: 56px;
+  height: 56px;
+}
+
+.itemList {
+  display: flex;
+  margin-bottom: 20px;
+  gap: 20px;
+  align-items: center;
+}
