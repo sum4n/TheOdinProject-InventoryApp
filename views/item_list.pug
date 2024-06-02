@@ -6,9 +6,13 @@ block content
   if item_list.length
     ul
       each item in item_list
-        li
+        li(class='itemList')
+          div(class='imgDiv') 
+            img(src=item.imgUrl alt='Item image')
           a(class='item' + item.quality href=item.url)  #{item.name}
             |  (#{item.slot.name})
+          
+        
           
   else
     p There are no items.

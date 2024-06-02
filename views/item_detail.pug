@@ -6,6 +6,8 @@ block content
     span(class='item' + item.quality) #{item.name}
 
   div
+    div(class='imgDiv')
+      img(src=item.imgUrl alt='Item image')
     p #[strong Description:] #{item.description} 
     p #[strong Quality:] 
       span(class='item' + item.quality) #{item.quality} 
