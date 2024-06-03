@@ -203,6 +203,7 @@ exports.item_update_post = [
     .isLength({ min: 1 })
     .escape(),
   body("slot", "Slot must not be empty").trim().isLength({ min: 1 }).escape(),
+  // TODO: sanitize updated file.
 
   // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
@@ -215,6 +216,7 @@ exports.item_update_post = [
       description: req.body.description,
       quality: req.body.quality,
       slot: req.body.slot,
+      imgUrl: `/images/${req.file.filename}`,
       _id: req.params.id, // Required, else a new ID will be assigned.
     });
 
