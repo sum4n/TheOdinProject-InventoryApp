@@ -117,12 +117,14 @@ exports.slot_delete_post = asyncHandler(async (req, res, next) => {
     Item.find({ slot: req.params.id }).sort({ quality: 1 }).exec(),
   ]);
 
-  if (itemsInSlot.length > 0) {
+  if (itemsInSlot.length > 0 || req.body.security_code != "123") {
     // Slot has items. Render in same way as for GET route.
     res.render("slot_delete", {
       title: "Delete Slot",
       slot: slot,
       slot_items: itemsInSlot,
+      code: req.body.security_code,
+      error: "Wrong security code.",
     });
     return;
   } else {
@@ -146,6 +148,7 @@ exports.slot_update_get = asyncHandler(async (req, res, next) => {
   res.render("slot_form", {
     title: "Update Slot",
     slot: slot,
+    form_type: "update",
   });
 });
 
@@ -174,12 +177,15 @@ exports.slot_update_post = [
       _id: req.params.id,
     });
 
-    if (!errors.isEmpty()) {
+    if (!errors.isEmpty() || req.body.security_code != "123") {
       // There are errors. Render the form again with sanitized values/error messages.
       res.render("slot_form", {
         title: "Update Slot",
         slot: slot,
         errors: errors.array(),
+        code: req.body.security_code,
+        form_type: "update",
+        error: "Wrong security code.",
       });
       return;
     } else {

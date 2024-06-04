@@ -10,6 +10,10 @@ block content
      input#name(type='text', placeholder='Head, Shoulder etc.' name='name' required value=(undefined===slot ? '' :  slot.name))
      label(for="description") Description:
      input#description(type='text', placeholder="Slot description", name='description' required value=(undefined===slot ? '' : slot.description))
+
+     if form_type == "update"
+      include code_form.pug
+      
      button(type='submit') Submit
 
   if errors
