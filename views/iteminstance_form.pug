@@ -30,6 +30,9 @@ block content
       label(for='price') Price: 
       input#price(type='number', name='price' required min='1' step='0.01' value=(undefined===iteminstance ? '' : parseFloat(iteminstance.price)))
 
+      if form_type == "update"
+        include code_form
+
       button(type='submit') Submit
 
     if errors

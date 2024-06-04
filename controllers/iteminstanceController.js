@@ -133,8 +133,22 @@ exports.iteminstance_delete_get = asyncHandler(async (req, res, next) => {
 
 // Hande ItemInstance delete on POST.
 exports.iteminstance_delete_post = asyncHandler(async (req, res, next) => {
-  await ItemInstance.findByIdAndDelete(req.body.iteminstanceid);
-  res.redirect("/catalog/iteminstances");
+  const itemInstance = await ItemInstance.findById(req.params.id)
+    .populate("item")
+    .populate("seller")
+    .exec();
+
+  if (req.body.security_code != "123") {
+    res.render("iteminstance_delete", {
+      title: "Delete ItemInstance",
+      iteminstance: itemInstance,
+      code: req.body.security_code,
+      error: "Wrong security code.",
+    });
+  } else {
+    await ItemInstance.findByIdAndDelete(req.body.iteminstanceid);
+    res.redirect("/catalog/iteminstances");
+  }
 });
 
 // Display ItemInstance update form GET.
@@ -160,6 +174,7 @@ exports.iteminstance_update_get = asyncHandler(async (req, res, next) => {
     selected_item: iteminstance.item._id,
     sellers: allSellers,
     selected_seller: iteminstance.seller._id,
+    form_type: "update",
   });
 });
 
@@ -197,7 +212,7 @@ exports.iteminstance_update_post = [
       _id: req.params.id,
     });
 
-    if (!errors.isEmpty()) {
+    if (!errors.isEmpty() || req.body.security_code != "123") {
       // There are errors. Render form again with sanitized values/errors messages.
 
       // Get all items and sellers for form
@@ -214,6 +229,9 @@ exports.iteminstance_update_post = [
         selected_seller: iteminstance.seller._id,
         iteminstance: iteminstance,
         errors: errors.array(),
+        form_type: "update",
+        error: "Wrong security code",
+        code: req.body.security_code,
       });
       return;
     } else {
