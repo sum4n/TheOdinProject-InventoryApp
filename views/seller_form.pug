@@ -11,6 +11,9 @@ block content
       
       label(for='last_name') Last Name:
       input#last_name(type='text', placeholder='LastName' name='last_name', required value=(undefined===seller ? '' : seller.last_name))
+
+      if form_type == "update"
+        include code_form
       
       button(type='submit') Submit
 

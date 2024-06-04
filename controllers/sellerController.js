@@ -110,12 +110,14 @@ exports.seller_delete_post = asyncHandler(async (req, res, next) => {
     ItemInstance.find({ seller: req.params.id }).populate("item").exec(),
   ]);
 
-  if (allItemsBySeller.length > 0) {
+  if (allItemsBySeller.length > 0 || req.body.security_code != "123") {
     // Seller has items. Render in same way as for GET route.
     res.render("seller_delete", {
       title: "Delete Seller",
       seller: seller,
       seller_items: allItemsBySeller,
+      code: req.body.security_code,
+      error: "Wrong security code.",
     });
     return;
   } else {
@@ -139,6 +141,7 @@ exports.seller_update_get = asyncHandler(async (req, res, next) => {
   res.render("seller_form", {
     title: "Update Seller",
     seller: seller,
+    form_type: "update",
   });
 });
 
@@ -167,12 +170,15 @@ exports.seller_update_post = [
       _id: req.params.id,
     });
 
-    if (!errors.isEmpty()) {
+    if (!errors.isEmpty() || req.body.security_code != "123") {
       // There are errors. Render the form again with sanitized values/error messages.
       res.render("seller_form", {
         title: "Update Seller",
         seller: seller,
         errors: errors.array(),
+        code: req.body.security_code,
+        form_type: "update",
+        error: "Wrong security code.",
       });
       return;
     } else {
