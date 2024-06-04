@@ -102,7 +102,7 @@ exports.item_create_post = [
       description: req.body.description,
       quality: req.body.quality,
       slot: req.body.slot,
-      imgUrl: `/images/${req.file.filename}`,
+      imgUrl: req.file ? `/images/${req.file.filename}` : "#",
     });
 
     if (!errors.isEmpty()) {
@@ -219,7 +219,7 @@ exports.item_update_post = [
       description: req.body.description,
       quality: req.body.quality,
       slot: req.body.slot,
-      imgUrl: req.file ? `/images/${req.file.filename}` : "",
+      imgUrl: req.file ? `/images/${req.file.filename}` : "#",
       _id: req.params.id, // Required, else a new ID will be assigned.
     });
 
