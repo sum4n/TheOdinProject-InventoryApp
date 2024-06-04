@@ -154,12 +154,14 @@ exports.item_delete_post = asyncHandler(async (req, res, next) => {
     ItemInstance.find({ item: req.params.id }).populate("item").exec(),
   ]);
 
-  if (itemInstances.length > 0) {
+  if (itemInstances.length > 0 || req.body.security_code != "123") {
     // Item has instances. Render in same way as for GET route.
     res.render("item_delete", {
-      title: "Delte Item",
+      title: "Delete Item",
       item: item,
       itemInstances: itemInstances,
+      code: req.body.security_code,
+      error: "Wrong security code.",
     });
     return;
   } else {

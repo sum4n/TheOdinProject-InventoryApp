@@ -1,0 +1,9 @@
+
+div(style='margin-top:20px;margin-bottom:10px')
+  from(methods='POST')
+    div
+      label(for='security_code') Security code to update/delete: 
+      input#security_code(type='text', placeholder='Hint: 123' name='security_code', required value=(undefined === code ? '' : code))
+
+  if error
+    p(style='color:red') #{error}

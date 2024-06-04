@@ -21,5 +21,7 @@ block content
     form(method='POST')
       div.form-group
         input#itemid.form-control(type='hidden', name='itemid', value=item._id)
+        
+        include code_form
 
       button(type='submit') Delete
