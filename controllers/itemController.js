@@ -190,6 +190,7 @@ exports.item_update_get = asyncHandler(async (req, res, next) => {
     title: "Update Item",
     item: item,
     slots: slots,
+    form_type: "update",
   });
 });
 
@@ -218,11 +219,11 @@ exports.item_update_post = [
       description: req.body.description,
       quality: req.body.quality,
       slot: req.body.slot,
-      imgUrl: `/images/${req.file.filename}`,
+      imgUrl: req.file ? `/images/${req.file.filename}` : "",
       _id: req.params.id, // Required, else a new ID will be assigned.
     });
 
-    if (!errors.isEmpty()) {
+    if (!errors.isEmpty() || req.body.security_code != "123") {
       // There are errors. Render the form again with sanitized values/errors messages.
 
       // Get item and its slots for form.
@@ -236,6 +237,9 @@ exports.item_update_post = [
         item: item,
         slots: slots,
         errors: errors.array(),
+        code: req.body.security_code,
+        form_type: "update",
+        error: "Wrong security code.",
       });
       return;
     } else {

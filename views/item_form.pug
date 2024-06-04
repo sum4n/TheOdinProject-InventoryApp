@@ -35,6 +35,9 @@ block content
               option(value=slot._id) #{slot.name}
           else
             option(value=slot._id) #{slot.name}
+      
+      if form_type == "update"
+        include code_form
 
       button(type='submit') Submit
 
