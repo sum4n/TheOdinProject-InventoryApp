@@ -238,7 +238,7 @@ exports.item_update_post = [
       description: req.body.description,
       quality: req.body.quality,
       slot: req.body.slot,
-      imgUrl: req.file ? `/images/${req.file.filename}` : "#",
+      // imgUrl: req.file ? `/images/${req.file.filename}` : "#",
       _id: req.params.id, // Required, else a new ID will be assigned.
     });
 
@@ -262,6 +262,21 @@ exports.item_update_post = [
       });
       return;
     } else {
+      if (req.file) {
+        // There is image file, upload it and add its url.
+        // Upload image to cloudinary
+        const b64 = Buffer.from(req.file.buffer).toString("base64");
+        const dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+        const uploadedImage = await cloudinary.uploader.upload(dataURI, {
+          resource_type: "image",
+        });
+
+        // Add the image's url as item's image url.
+        item.imgUrl = uploadedImage.secure_url;
+      } else {
+        item.imgUrl = "#";
+      }
+
       await Item.findByIdAndUpdate(req.params.id, item, {});
       // Redirect to item detail page.
       res.redirect(item.url);
