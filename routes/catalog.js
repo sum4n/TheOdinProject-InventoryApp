@@ -2,7 +2,16 @@ const express = require("express");
 const router = express.Router();
 
 const multer = require("multer");
-const upload = multer({ dest: "./public/images" });
+// const upload = multer({ dest: "./public/images" });
+// Config multer for cloudinary upload.
+const uploadPhoto = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 200000 }, // 200 kb
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) cb(null, true);
+    else cb(new Error("Not an image! Please upload only images."), false);
+  },
+});
 
 // Require controller modules.
 const item_controller = require("../controllers/itemController");
@@ -21,7 +30,7 @@ router.get("/item/create", item_controller.item_create_get);
 // POST request for creating Item.
 router.post(
   "/item/create",
-  upload.single("itemImage"),
+  uploadPhoto.single("itemImage"),
   item_controller.item_create_post
 );
 
@@ -37,7 +46,7 @@ router.get("/item/:id/update", item_controller.item_update_get);
 // POST request to update Item.
 router.post(
   "/item/:id/update",
-  upload.single("itemImage"),
+  uploadPhoto.single("itemImage"),
   item_controller.item_update_post
 );
 
