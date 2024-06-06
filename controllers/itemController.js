@@ -110,7 +110,7 @@ exports.item_create_post = [
       description: req.body.description,
       quality: req.body.quality,
       slot: req.body.slot,
-      imgUrl: req.file ? `/images/${req.file.filename}` : "#",
+      // imgUrl added before saving the item object.
     });
 
     if (!errors.isEmpty()) {
@@ -127,7 +127,18 @@ exports.item_create_post = [
       });
       return;
     } else {
-      // Data from form is valid. Save item.
+      // Data is valid.
+      // Upload image to cloudinary
+      const b64 = Buffer.from(req.file.buffer).toString("base64");
+      const dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+      const uploadedImage = await cloudinary.uploader.upload(dataURI, {
+        resource_type: "image",
+      });
+
+      // Add the image's url as item's image url.
+      item.imgUrl = uploadedImage.secure_url;
+
+      // Save item.
       await item.save();
       res.redirect(item.url);
     }
