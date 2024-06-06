@@ -127,16 +127,20 @@ exports.item_create_post = [
       });
       return;
     } else {
-      // Data is valid.
-      // Upload image to cloudinary
-      const b64 = Buffer.from(req.file.buffer).toString("base64");
-      const dataURI = "data:" + req.file.mimetype + ";base64," + b64;
-      const uploadedImage = await cloudinary.uploader.upload(dataURI, {
-        resource_type: "image",
-      });
+      if (req.file) {
+        // There is image file, upload it and add its url.
+        // Upload image to cloudinary
+        const b64 = Buffer.from(req.file.buffer).toString("base64");
+        const dataURI = "data:" + req.file.mimetype + ";base64," + b64;
+        const uploadedImage = await cloudinary.uploader.upload(dataURI, {
+          resource_type: "image",
+        });
 
-      // Add the image's url as item's image url.
-      item.imgUrl = uploadedImage.secure_url;
+        // Add the image's url as item's image url.
+        item.imgUrl = uploadedImage.secure_url;
+      } else {
+        item.imgUrl = "#";
+      }
 
       // Save item.
       await item.save();
