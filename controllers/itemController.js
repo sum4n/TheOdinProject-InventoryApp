@@ -6,6 +6,14 @@ const ItemInstance = require("../models/iteminstance");
 const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 
+// Cloudinary configs
+const cloudinary = require("cloudinary").v2;
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 exports.index = asyncHandler(async (req, res, next) => {
   // Get details of items, sellers, slots and item instances counts (in paraller)
   const [
