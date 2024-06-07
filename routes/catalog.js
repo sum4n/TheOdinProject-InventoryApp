@@ -7,10 +7,6 @@ const multer = require("multer");
 const uploadPhoto = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 200000 }, // 200 kb
-  fileFilter: (req, file, cb) => {
-    if (file.mimetype.startsWith("image/")) cb(null, true);
-    else cb(new Error("Not an image! Please upload only images."), false);
-  },
 });
 
 // Require controller modules.
