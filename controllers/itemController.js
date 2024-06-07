@@ -4,7 +4,7 @@ const Slot = require("../models/slot");
 const ItemInstance = require("../models/iteminstance");
 
 const asyncHandler = require("express-async-handler");
-const { body, validationResult } = require("express-validator");
+const { body, check, validationResult } = require("express-validator");
 
 // Cloudinary configs
 const cloudinary = require("cloudinary").v2;
@@ -97,7 +97,20 @@ exports.item_create_post = [
     .isLength({ min: 1 })
     .escape(),
   body("slot", "Slot must not be empty").trim().isLength({ min: 1 }).escape(),
-  // TODO: Sanitize file. Only image file should be uploaded.
+  // Validate file. Only image file should be uploaded.
+  check("itemImage")
+    .custom((value, { req }) => {
+      if (!req.file) {
+        // There is no file. Pass/skip validation.
+        return true;
+      }
+      if (req.file.mimetype.startsWith("image/")) {
+        return true;
+      } else {
+        return false;
+      }
+    })
+    .withMessage("Please submit a image file"),
 
   // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
@@ -229,7 +242,20 @@ exports.item_update_post = [
     .isLength({ min: 1 })
     .escape(),
   body("slot", "Slot must not be empty").trim().isLength({ min: 1 }).escape(),
-  // TODO: sanitize updated file.
+  // Validate file. Only image file should be uploaded.
+  check("itemImage")
+    .custom((value, { req }) => {
+      if (!req.file) {
+        // There is no file. Pass/skip validation.
+        return true;
+      }
+      if (req.file.mimetype.startsWith("image/")) {
+        return true;
+      } else {
+        return false;
+      }
+    })
+    .withMessage("Please submit a image file"),
 
   // Process request after validation and sanitization.
   asyncHandler(async (req, res, next) => {
