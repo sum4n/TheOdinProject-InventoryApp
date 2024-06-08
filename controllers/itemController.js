@@ -301,6 +301,9 @@ exports.item_update_post = [
         const uploadedImage = await cloudinary.uploader.upload(dataURI, {
           resource_type: "image",
           folder: "wow_inventory",
+          public_id: item._id,
+          overwrite: true,
+          invalidate: true,
         });
 
         // Add the image's url as item's image url.
