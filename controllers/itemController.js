@@ -147,6 +147,7 @@ exports.item_create_post = [
         const dataURI = "data:" + req.file.mimetype + ";base64," + b64;
         const uploadedImage = await cloudinary.uploader.upload(dataURI, {
           resource_type: "image",
+          folder: "wow_inventory",
         });
 
         // Add the image's url as item's image url.
@@ -299,6 +300,7 @@ exports.item_update_post = [
         const dataURI = "data:" + req.file.mimetype + ";base64," + b64;
         const uploadedImage = await cloudinary.uploader.upload(dataURI, {
           resource_type: "image",
+          folder: "wow_inventory",
         });
 
         // Add the image's url as item's image url.
