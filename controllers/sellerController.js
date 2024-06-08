@@ -178,7 +178,7 @@ exports.seller_update_post = [
         errors: errors.array(),
         code: req.body.security_code,
         form_type: "update",
-        error: "Wrong security code.",
+        error: req.body.security_code != "123" ? "Wrong security code." : "",
       });
       return;
     } else {

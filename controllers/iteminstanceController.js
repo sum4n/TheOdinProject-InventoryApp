@@ -230,7 +230,7 @@ exports.iteminstance_update_post = [
         iteminstance: iteminstance,
         errors: errors.array(),
         form_type: "update",
-        error: "Wrong security code",
+        error: req.body.security_code != "123" ? "Wrong security code." : "",
         code: req.body.security_code,
       });
       return;
