@@ -9,8 +9,32 @@ const usersRouter = require("./routes/users");
 // Import routes for "catalog" area of site.
 const catalogRouter = require("./routes/catalog");
 const compression = require("compression");
+const helmet = require("helmet");
 
 const app = express();
+
+// Add helmet to the middleware chain.
+// Set CSP headers to allow our Bootstrap and Jquery to be served
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      //  "default-src" used as fallback for any undeclared directives
+      "default-src": ["'self'"],
+      // I have stripe_set up
+      "script-src": ["'self'", "'unsafe-inline'", "js.stripe.com"],
+      "style-src": ["'self'", "'unsafe-inline'", "fonts.googleapis.com"],
+      "frame-src": ["'self'", "js.stripe.com"],
+      "font-src": [
+        "'self'",
+        "fonts.googleapis.com",
+        "fonts.gstatic.com",
+        "res.cloudinary.com/",
+      ],
+      "img-src": ["'self'", "data:", "https://res.cloudinary.com"],
+    },
+    reportOnly: true,
+  })
+);
 
 // Set up mongoose connection
 const mongoose = require("mongoose");
@@ -30,7 +54,12 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(compression); // Compress all routes.
+// Compress all routes. Needed threshold size for app to work.
+app.use(
+  compression({
+    threshold: 0,
+  })
+);
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
