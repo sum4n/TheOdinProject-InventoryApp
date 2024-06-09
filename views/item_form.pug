@@ -9,7 +9,7 @@ block content
       label(for='name') Name:
       input#name(type='text', placeholder='Name of item' name='name' required value=(undefined===item ? '' : item.name))
 
-      label(for='itemImage') Add image:
+      label(for='itemImage') Add image #[small (File size limit: 200kb)]:
       input#itemImage(type='file', placeholder='Add an image', name='itemImage' value=(undefined===item ? '' : item.itemImage))
 
       label(for='description') Description:
