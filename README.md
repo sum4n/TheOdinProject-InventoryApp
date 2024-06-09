@@ -33,7 +33,7 @@ git clone https://github.com/sum4n/TheOdinProject-InventoryApplication.git
 - Go into project folder:
 
 ```
-cd TheOdinProject-InvetoryApplication
+cd TheOdinProject-InventoryApplication
 ```
 
 - Install dependencies:
